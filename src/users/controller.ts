@@ -33,13 +33,17 @@ export async function all(req: Request, res: Response) {
 }
 
 function mapUser(user: admin.auth.UserRecord) {
-    const customClaims = (user.customClaims || { role: '' }) as { role?: string };
+    const customClaims = (user.customClaims || { role: '' , notificationToken: ''}) as { role?: string, notificationToken?: string };
     const role = customClaims.role ? customClaims.role : '';
+    const notificationToken = customClaims.notificationToken ? customClaims.notificationToken : '';
+    // console.log("Role", role);
+    // console.log("NotificationToken", notificationToken);
     return {
         uid: user.uid,
         email: user.email || '',
         displayName: user.displayName || '',
         role,
+        notificationToken,
         lastSignInTime: user.metadata.lastSignInTime,
         creationTime: user.metadata.creationTime,
     };
@@ -57,22 +61,88 @@ export async function get(req: Request, res: Response) {
 
 export async function patch(req: Request, res: Response) {
 
-   try {
-       const { id } = req.params;
-       const { displayName, password, email, role } = req.body;
+//    try {
+//        const { id } = req.params;
+//        const { displayName, password, email, role, notificationToken } = req.body;
+       
 
-       if (!id || !displayName || !password || !email || !role) {
-           return res.status(400).send({ message: 'Missing fields' });
-       }
+//        if (!id || !displayName || !password || !email || !role) {
+//            return res.status(400).send({ message: 'Missing fields' });
+//        }
 
-       await admin.auth().updateUser(id, { displayName, password, email });
-       await admin.auth().setCustomUserClaims(id, { role });
-       const user = await admin.auth().getUser(id);
+//        await admin.auth().updateUser(id, { displayName, password, email });
+//        if(notificationToken){
+//            await admin.auth().setCustomUserClaims(id, { role, notificationToken });
+           
+//        } else {
+//             await admin.auth().setCustomUserClaims(id, { role });
+//        }
 
-       return res.status(204).send({ user: mapUser(user) });
-   } catch (err) {
-       return handleError(res, err);
-   }
+//        const user = await admin.auth().getUser(id);
+
+
+//        return res.status(204).send({ user: mapUser(user) });
+//    } catch (err) {
+//        console.log('error PATCH', err);
+//        return handleError(res, err);
+//    }
+    try {
+        const { id } = req.params;
+        const { displayName, email, role, notificationToken } = req.body;
+        
+        console.log("NOTIFICATION TOKEN", notificationToken)
+
+        if (!id || !displayName || !email || !role) {
+            return res.status(400).send({ message: 'Missing fields' });
+        }
+
+        if(notificationToken){
+            console.log("NOTIFICATION TOKEN IF", notificationToken)
+            await admin.auth().setCustomUserClaims(id, { role, notificationToken });
+            
+        } else {
+            
+            await admin.auth().setCustomUserClaims(id, { role });
+        }
+
+        const user = await admin.auth().getUser(id);
+
+
+        return res.status(204).send({ user: mapUser(user) });
+    } catch (err) {
+        console.log('error PATCH', err);
+        return handleError(res, err);
+    }
+}
+export async function editNotificationToken(req: Request, res: Response) {
+
+    try {
+        const { id } = req.params;
+        const { displayName, email, role, notificationToken } = req.body;
+        
+        console.log("NOTIFICATION TOKEN", notificationToken)
+
+        if (!id || !displayName || !email || !role) {
+            return res.status(400).send({ message: 'Missing fields' });
+        }
+
+        if(notificationToken){
+            console.log("NOTIFICATION TOKEN IF", notificationToken)
+            await admin.auth().setCustomUserClaims(id, { role, notificationToken });
+            
+        } else {
+            
+            await admin.auth().setCustomUserClaims(id, { role });
+        }
+
+        const user = await admin.auth().getUser(id);
+
+
+        return res.status(204).send({ user: mapUser(user) });
+    } catch (err) {
+        console.log('error PATCH', err);
+        return handleError(res, err);
+    }
 }
 
 export async function remove(req: Request, res: Response) {
