@@ -1,5 +1,5 @@
 import { Application } from "express";
-import { create, all, get, patch, remove, editNotificationToken, sendNotif} from "./controller";
+import { create, all, get, patch, remove, editNotificationToken, sendNotif } from "./controller";
 import { isAuthenticated } from "../auth/authenticated";
 import { isAuthorized } from "../auth/authorized";
 
@@ -39,9 +39,10 @@ app.delete('/users/:id', [
     remove,
 ]);
 
-app.get('/notif/:body', [
+app.post('/notif', [
     isAuthenticated,
     isAuthorized({ hasRole: ['admin', 'manager', 'user'], allowSameUser: true }),
     sendNotif,
 ]);
+
 }

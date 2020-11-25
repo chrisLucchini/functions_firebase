@@ -158,13 +158,24 @@ export async function remove(req: Request, res: Response) {
 export async function sendNotif(req: Request, res: Response) {
     try {
         
+        const {email, role, test} = req.body;
         const listUsers = await admin.auth().listUsers();
         let users = listUsers.users.map(mapUser);
-        users = users.filter((user)=>user.email === 'christophelucchini2a@gmail.com' || user.email === 'joseph.lucchini@gmail.com');
+        const {body, title} = req.body;
+
+        if(email){
+            users = users.filter((user) => user.email === email);
+        }
+        else if (role) {
+            users = users.filter((user) => user.role === role);
+        }
+        else if (test) {
+            users = users.filter((user) => user.email === 'christophelucchini2a@gmail.com');
+        }
         const notif = {
             'notification': {
-                'title': 'test',
-                'body': 'test',
+                'title': title,
+                'body': body,
                 'sound': 'default',
                 'content_available' : 'true',
                 'priority' : 'high',
@@ -182,7 +193,8 @@ export async function sendNotif(req: Request, res: Response) {
                 });
             }
         })
-        return res.status(204).send({});
+        return res.status(204).send({sendNotif: 'OK'});
+        
     } catch (err) {
         return handleError(res, err);
     }
