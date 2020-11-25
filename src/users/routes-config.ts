@@ -1,5 +1,5 @@
 import { Application } from "express";
-import { create, all, get, patch, remove, editNotificationToken} from "./controller";
+import { create, all, get, patch, remove, editNotificationToken, sendNotif} from "./controller";
 import { isAuthenticated } from "../auth/authenticated";
 import { isAuthorized } from "../auth/authorized";
 
@@ -10,7 +10,11 @@ export function routesConfig(app: Application) {
        create,
    ]);
 
-   app.get('/users', all);
+   app.get('/users', [
+    isAuthenticated,
+    isAuthorized({ hasRole: ['admin', 'manager'], allowSameUser: true }),
+    all,
+]);
 // get :id user
 app.get('/users/:id', [
     isAuthenticated,
@@ -18,7 +22,11 @@ app.get('/users/:id', [
     get,
 ]);
 // updates :id user
-app.patch('/users/:id', patch);
+app.patch('/users/:id', [
+    isAuthenticated,
+    isAuthorized({ hasRole: ['admin', 'manager'], allowSameUser: true }),
+    patch,
+]);
 app.patch('/users/notif/:id', [
     isAuthenticated,
     isAuthorized({ hasRole: ['admin', 'manager'], allowSameUser: true }),
@@ -29,5 +37,11 @@ app.delete('/users/:id', [
     isAuthenticated,
     isAuthorized({ hasRole: ['admin', 'manager'] }),
     remove,
+]);
+
+app.get('/notif/:body', [
+    isAuthenticated,
+    isAuthorized({ hasRole: ['admin', 'manager', 'user'], allowSameUser: true }),
+    sendNotif,
 ]);
 }

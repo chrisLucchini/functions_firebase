@@ -155,6 +155,39 @@ export async function remove(req: Request, res: Response) {
    }
 }
 
+export async function sendNotif(req: Request, res: Response) {
+    try {
+        
+        const listUsers = await admin.auth().listUsers();
+        let users = listUsers.users.map(mapUser);
+        users = users.filter((user)=>user.email === 'christophelucchini2a@gmail.com' || user.email === 'joseph.lucchini@gmail.com');
+        const notif = {
+            'notification': {
+                'title': 'test',
+                'body': 'test',
+                'sound': 'default',
+                'content_available' : 'true',
+                'priority' : 'high',
+            },
+        };
+        users.forEach(async (user)=>{
+            
+            if(user.notificationToken){
+
+                await admin.messaging().sendToDevice(user.notificationToken, notif).then((resp)=> {
+                    console.log('success', resp);
+                })
+                .catch((error)=> {
+                    console.log(error);
+                });
+            }
+        })
+        return res.status(204).send({});
+    } catch (err) {
+        return handleError(res, err);
+    }
+ }
+
 function handleError(res: Response, err: any) {
    return res.status(500).send({ message: `${err.code} - ${err.message}` });
 }
