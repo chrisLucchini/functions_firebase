@@ -32,7 +32,7 @@ export async function all(req: Request, res: Response) {
     }
 }
 
-function mapUser(user: admin.auth.UserRecord) {
+export function mapUser(user: admin.auth.UserRecord) {
     const customClaims = (user.customClaims || { role: '' , notificationToken: ''}) as { role?: string, notificationToken?: string };
     const role = customClaims.role ? customClaims.role : '';
     const notificationToken = customClaims.notificationToken ? customClaims.notificationToken : '';
