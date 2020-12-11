@@ -4,7 +4,7 @@ import * as express from "express";
 // import * as cors from 'cors';
 import * as bodyParser from "body-parser";
 import { routesConfig } from "./users/routes-config";
-import { sendScheduleNotif } from "./notification/sendNotif";
+import { sendScheduleNotif, sendRecallNotif } from "./notification/sendNotif";
 
 admin.initializeApp();
 
@@ -44,5 +44,9 @@ exports.schedule1 = functions.pubsub.schedule('45 08 * * 1,3,5').timeZone('Europ
 exports.schedule2 = functions.pubsub.schedule('45 14 * * 1-5').timeZone('Europe/Paris').onRun(async (context)=> {
     console.log('schedule2');
     await sendScheduleNotif();
+})
+exports.schedule3 = functions.pubsub.schedule('00 08 * * *').timeZone('Europe/Paris').onRun(async (context)=> {
+    console.log('schedule3');
+    await sendRecallNotif();
 })
 export const api = functions.https.onRequest(app);
