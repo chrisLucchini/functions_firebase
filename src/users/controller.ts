@@ -88,12 +88,21 @@ export async function patch(req: Request, res: Response) {
 //    }
     try {
         const { id } = req.params;
-        const { displayName, email, role, notificationToken } = req.body;
+        const { displayName, email, role, notificationToken, password } = req.body;
         
         console.log("NOTIFICATION TOKEN", notificationToken)
 
         if (!id || !displayName || !email || !role) {
             return res.status(400).send({ message: 'Missing fields' });
+        }
+
+        await admin.auth().updateUser(id, {
+            email: email,
+            displayName: displayName,
+        });
+
+        if(password) {
+            await admin.auth().updateUser(id, {password: password})
         }
 
         if(notificationToken){
