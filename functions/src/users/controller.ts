@@ -90,7 +90,8 @@ export async function patch(req: Request, res: Response) {
         const { id } = req.params;
         const { displayName, email, role, notificationToken, password } = req.body;
         
-        console.log("NOTIFICATION TOKEN", notificationToken)
+        console.log("NOTIFICATION TOKEN", notificationToken);
+        console.log("Req . body: ", req.body);
 
         if (!id || !displayName || !email || !role) {
             return res.status(400).send({ message: 'Missing fields' });
@@ -192,11 +193,12 @@ export async function sendNotif(req: Request, res: Response) {
         };
         console.log(notif);
         users.forEach(async (user)=>{
+            console.log(user);
             
             if(user.notificationToken){
 
                 await admin.messaging().sendToDevice(user.notificationToken, notif).then((resp)=> {
-                    console.log('success', resp);
+                    console.log('success', JSON.stringify(resp));
                 })
                 .catch((error)=> {
                     console.log(error.message);

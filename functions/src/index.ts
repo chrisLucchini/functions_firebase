@@ -37,15 +37,15 @@ app.use((req, res, next) => {
 routesConfig(app);
 
 
-exports.schedule1 = functions.pubsub.schedule('45 08 * * 1,3,5').timeZone('Europe/Paris').onRun(async (context)=> {
+exports.schedule1 = functions.region('europe-west1').pubsub.schedule('45 08 * * 1,3,5').timeZone('Europe/Paris').onRun(async (context)=> {
     console.log('schedule1');
     await sendScheduleNotif();
 })
-exports.schedule2 = functions.pubsub.schedule('45 14 * * 1-5').timeZone('Europe/Paris').onRun(async (context)=> {
+exports.schedule2 = functions.region('europe-west1').pubsub.schedule('45 14 * * 1-5').timeZone('Europe/Paris').onRun(async (context)=> {
     console.log('schedule2');
     await sendScheduleNotif();
 })
-exports.schedule3 = functions.pubsub.schedule('00 08 * * *').timeZone('Europe/Paris').onRun(async (context)=> {
+exports.schedule3 = functions.region('europe-west1').pubsub.schedule('00 08 * * *').timeZone('Europe/Paris').onRun(async (context)=> {
     console.log('schedule3');
     await sendRecallNotif();
 })
